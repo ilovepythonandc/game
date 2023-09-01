@@ -8,6 +8,7 @@ from rand import rand
 from mixer import Mixer
 from gui import *
 from enemies import *
+from level_loader import *
 
 class Game:
     wide = 720
@@ -19,7 +20,7 @@ class Game:
     paass = 4
     def __init__(self):
         self.screen = pygame.display.set_mode((self.tall, self.wide))
-        pygame.display.set_caption(__name__)
+        pygame.display.set_caption("millage castle")
         pygame.mouse.set_visible(0)
         self.rand = rand
         self.boss = Time_machine(self)
@@ -27,20 +28,26 @@ class Game:
         self.castle = 1
         self.level = 5
         self.pause = pygame.mixer.Sound("./assets/sound/pause.ogg")
-        if self.level != 5:
-            self.mixer.reload("./assets/music/castle{0}.mp3".format(self.castle))
-        else:
-            self.mixer.reload("./assets/music/boss.mp3")
         self.player = Player(self)
         self.buttons = pygame.sprite.Group()
-        self.buttons.add(Pause_button(self))
+        # self.buttons.add(Pause_button(self))
         self.mouse = Mouse(self)
         self.fps = 60
-        self.status = self.advance
+        self.status = self.main_menu
         self.font = pygame.font.Font("./assets/image/font.otf", 40)
         self.heal_text = Mind_block(self)
         self.coin_text = Coin_block(self)
         self.clock = pygame.time.Clock()
+
+    def go_level(self):
+        self.level = load_level()
+        self.status = self.advance
+        self.buttons.clear()
+        self.buttons.add(Pause_button(self))
+        if self.level != 5:
+            self.mixer.reload("./assets/music/castle{0}.mp3".format(self.castle))
+        else:
+            self.mixer.reload("./assets/music/boss.mp3")
 
     def run(self):
         while True:
